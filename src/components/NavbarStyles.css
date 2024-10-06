@@ -22,7 +22,7 @@
 }
 
 .nav-menu {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(6, auto);
   grid-gap: 10px;
   list-style: none;
@@ -34,6 +34,7 @@
   color: #222;
   font-size: 1.2rem;
   font-weight: 600;
+  background-color: white;
   padding: 0.7rem 1rem;
   white-space: nowrap;
 }
@@ -58,6 +59,7 @@ button {
   white-space: nowrap;
   border-radius: 0.3rem;
   font-size: 1rem;
+  background-color: white;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -102,6 +104,7 @@ button:hover {
   .nav-links {
     display: block;
     width: 100%;
+    background-color: white;
     font-size: 1.2rem;
     padding: 2rem 0;
   }
@@ -113,6 +116,7 @@ button:hover {
 
   button {
     display: none;
+    background-color: white;
   }
 
   .nav-links-mobile {
@@ -143,4 +147,111 @@ button:hover {
     font-size: 1.2rem;
     color: #222;
   }
+}
+.signup-container {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%) scale(0.8); /* Initial scale for animation */
+  background-color: #fff;
+  border: 2px solid #ccc;
+  padding: 20px;
+  margin-top: 160px;
+  border-radius: 50px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 300px;
+  text-align: center;
+  opacity: 0; /* Initial hidden state */
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* Animation */
+}
+
+.signup-container.show {
+  transform: translate(-50%, -20%) scale(1); /* End scale (normal size) */
+  opacity: 1; /* Visible state */
+}
+
+.signup-container h2 {
+  margin-bottom: 20px;
+}
+
+.signup-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.signup-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.signup-container button {
+  padding: 10px;
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.signup-container p {
+  margin-top: 20px;
+}
+
+.signup-container p .switch-link {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.signup-container p .switch-link:hover {
+  text-decoration: none;
+}
+/* NavbarStyles.css */
+
+.cart-button {
+  background-color: #28a745; /* Change this to match your theme */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  margin-left: 10px; /* Add some space between buttons */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.cart-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.admin-login-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* Ensure it is above other content */
+}
+
+.admin-login-container.show {
+  display: block;
+}
+
+.admin-login-container input {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+}
+
+.admin-login-container button {
+  margin: 5px 0;
 }
