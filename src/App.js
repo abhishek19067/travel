@@ -7,6 +7,7 @@ import Contact from "./routes/Contact";
 import MyTrips from './components/MyTrips';
 
 import BookingsTable from "./components/MyTrips";
+import TicketView from "./components/TicketView";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/service" element={<Service />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/MyTrips" element={<MyTrips />} />
+        <Route path="/view-ticket/:bookingId" element={<TicketView />} />
 
       </Routes>
     </div>

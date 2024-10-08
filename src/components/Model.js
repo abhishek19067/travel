@@ -1,37 +1,29 @@
 import axios from "axios";
-import { toast } from "react-toastify"; // Import toast 
+import { toast } from "react-toastify";
 import React, { useState } from "react";
-import DatePicker from "react-datepicker"; // Import the DatePicker
-import "react-datepicker/dist/react-datepicker.css"; // Import CSS for the date picker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren }) => {
     if (!isOpen) return null;
 
-    const userId = localStorage.getItem('userId');
-    const username = localStorage.getItem('username');
-    const [startDate, setStartDate] = useState(new Date()); // State for selected date
+    const username = localStorage.getItem('username') || 'Guest';
+    const [startDate, setStartDate] = useState(new Date());
 
     const confirmBooking = async () => {
-        console.log('User ID:', userId);
-        console.log('Username:', username);
+        const bookingDate = startDate.toISOString().split('T')[0];
 
-        if (!userId || !username) {
-            console.error('User ID or Username is not available');
-            alert('Please log in before making a booking.');
-            return;
-        }
-
-        const bookingDate = startDate.toISOString().split('T')[0]; // Format: "YYYY-MM-DD"
+        // Format the price by removing any non-numeric characters
+        const price = parseFloat(trip.price.replace(/[^\d.-]/g, ''));
 
         const bookingData = {
-            userId,
             username,
             tripName: trip.heading,
             adults,
             children,
-            bookingDate, // Only the date part
+            bookingDate,
+            price, // Now this is a number
         };
-        console.log(bookingData);
 
         try {
             const response = await axios.post('http://localhost:5000/bookings', bookingData, {
@@ -41,11 +33,11 @@ const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren
             });
 
             console.log('Booking confirmed:', response.data);
-            toast.success(`${trip.heading} is now in Your Trip Section!`); // Toast notification
+            toast.success(`${trip.heading} is now in Your Trip Section!`);
             onClose();
         } catch (error) {
             console.error('Error confirming booking:', error.response ? error.response.data : error.message);
-            toast.error('Error confirming booking. Please try again.'); // Error toast notification
+            toast.error('Error confirming booking. Please try again.');
         }
     };
 
@@ -71,10 +63,10 @@ const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren
                     <DatePicker
                         selected={startDate}
                         onChange={date => setStartDate(date)}
-                        filterDate={isDateValid} // Apply date validation
-                        minDate={new Date()} // Prevent past dates
-                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))} // Limit to one year in future
-                        dateFormat="MMMM d, yyyy" // Date format
+                        filterDate={isDateValid}
+                        minDate={new Date()}
+                        maxDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
+                        dateFormat="MMMM d, yyyy"
                     />
                 </div>
 

@@ -1,161 +1,189 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mysql = require('mysql2');
-const bcrypt = require('bcrypt');
+const express = require("express");
+const mysql = require("mysql");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 // Middleware
-app.use(cors({
-    origin: 'http://localhost:3000', // Change to your React app's URL if different
-    methods: 'GET,POST,PUT,DELETE',
-    credentials: true,
-}));
+app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// MySQL connection
+// MySQL Database Connection
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'harshu' // Ensure this matches your database name
+  host: "localhost",  // Database host
+  user: "root",       // Your MySQL username
+  password: "",       // Your MySQL password
+  database: "harshu"  // Your MySQL database name
 });
 
-// Connect to MySQL
-db.connect(err => {
-    if (err) {
-        console.error('Database connection failed: ' + err.stack);
+db.connect((err) => {
+  if (err) {
+    console.error("Error connecting to MySQL database:", err);
+    return;
+  }
+  console.log("Connected to MySQL database");
+});
+
+// JWT Authentication Middleware
+const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+
+  if (!token) return res.status(403).json({ message: "No token provided." });
+
+  jwt.verify(token, "secretKey", (err, decoded) => {
+    if (err) return res.status(500).json({ message: "Failed to authenticate token." });
+
+    req.userId = decoded.id;
+    next();
+  });
+};
+
+// Register Route
+app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+    // Check if user already exists
+    db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      if (results.length > 0) return res.status(400).json({ error: "User already exists." });
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Insert new user
+      db.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", [username, email, hashedPassword], (err, result) => {
+        if (err) return res.status(500).json({ error: err });
+        return res.status(201).json({ message: "User registered successfully!" });
+      });
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Registration failed." });
+  }
+});
+
+// Login Route
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if user exists
+    db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      if (results.length === 0) return res.status(400).json({ error: "User not found." });
+
+      const user = results[0];
+
+      // Compare password
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) return res.status(400).json({ error: "Invalid password." });
+
+      // Create and return JWT
+      const token = jwt.sign({ id: user.id }, "secretKey", { expiresIn: "1h" });
+      return res.status(200).json({ message: "Logged in successfully!", username: user.username, token });
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Login failed." });
+  }
+});
+
+// Bookings Route
+app.post('/bookings', (req, res) => {
+    const { username, tripName, adults, children, bookingDate, price } = req.body; // Extract price from request body
+
+    const insertQuery = `
+      INSERT INTO bookings (username, trip_name, adults, children, booking_date, price)
+      VALUES (?, ?, ?, ?, ?, ?);
+    `;
+    
+    // Use 'db' instead of 'connection'
+    db.query(insertQuery, [username, tripName, adults, children, bookingDate, price], (err, results) => {
+      if (err) {
+        console.error('Error inserting data:', err);
+        res.status(500).send({ message: 'Error confirming booking. Please try again.' });
+        return;
+      }
+      res.send({ message: 'Booking confirmed successfully' });
+    });
+});
+
+
+
+app.get('/api/bookings', (req, res) => {
+    const username = req.query.username;
+    if (!username) {
+        res.status(400).send({ message: 'Username is required' });
         return;
     }
-    console.log('Connected to database.');
-});
 
-// User signup route
-app.post('/signup', (req, res) => {
-    const { username, email, password } = req.body;
-    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    db.query(query, [username, email, password], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error saving user.' });
-        }
-        res.status(201).json({ message: 'User created successfully!' });
-    });
-});
-
-// User login route
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    const query = 'SELECT id, username FROM users WHERE email = ? AND password = ?';
-    db.query(query, [email, password], (err, results) => {
-        if (err) {
-            console.error('Error logging in:', err);
-            return res.status(500).json({ error: 'Error logging in.' });
-        }
-        if (results.length > 0) {
-            const { id, username } = results[0];
-            return res.json({ message: 'Login successful!', user_id: id, username });
-        } else {
-            return res.status(401).json({ error: 'Invalid email or password.' });
-        }
-    });
-});
-
-app.post('/bookings', (req, res) => {
-    const { userId, username, tripName, adults, children, bookingDate } = req.body;
-
-    const bookingQuery = `
-        INSERT INTO bookings (userId, username, tripName, adults, children, bookingDate) 
-        VALUES (?, ?, ?, ?, ?, ?)`;
-
-    db.query(bookingQuery, [userId, username, tripName, adults, children, bookingDate], (err, result) => {
-        if (err) {
-            console.error('Error creating booking:', err);
-            return res.status(500).json({ message: 'Error creating booking' });
-        }
-        res.status(201).json({ message: 'Booking created successfully', bookingId: result.insertId });
-    });
-});
-
-
-// Get bookings by username
-app.get('/api/bookings', (req, res) => {
-    const { username } = req.query; // Get username from query parameters
+    const query = `
+        SELECT id, username, trip_name, adults, children, booking_date, price
+        FROM bookings
+        WHERE username = ?
+    `;
     
-    if (!username) {
-        return res.status(400).json({ error: 'Username is required' });
+    db.query(query, [username], (err, results) => { // Change `connection` to `db`
+        if (err) {
+            console.error('Error fetching data:', err);
+            res.status(500).send({ message: 'Error fetching bookings' });
+            return;
+        }
+        res.send(results);
+    });
+});
+
+  // API endpoint to delete a booking by ID
+  app.delete('/api/bookings/:id', (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+      res.status(400).send({ message: 'Booking ID is required' });
+      return;
     }
-
-    const query = 'SELECT * FROM bookings WHERE username = ? AND isDeleted = 0'; // Filter by isDeleted
-    
-    db.query(query, [username], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Database error' });
-        }
-        res.json(results);
+  
+    const query = `
+      DELETE FROM bookings
+      WHERE id = ?
+    `;
+    connection.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error deleting booking:', err);
+        res.status(500).send({ message: 'Error deleting booking' });
+        return;
+      }
+      res.send({ message: 'Booking deleted successfully' });
     });
-});
+  });
 
-// Get all bookings (for admin or overview purposes)
-app.get('/api/bookings/all', (req, res) => {  // Changed the endpoint to avoid conflict
-    db.query('SELECT * FROM bookings WHERE isDeleted = 0', (err, results) => {
-        if (err) {
-            console.error('Error fetching bookings:', err);
-            return res.status(500).json({ error: 'Failed to fetch bookings' });
-        }
-        res.json(results);
-    });
-});
+  app.get('/api/bookings/:bookingId', (req, res) => {
+    const bookingId = req.params.bookingId;
 
-// 404 Middleware
-app.use((req, res) => {
-    res.status(404).json({ message: 'Resource not found' });
-});
-
-app.get('/', (req, res) => {
-    res.send('Welcome to the API!'); // A simple response for the root
-});
-
-// Soft delete booking
-app.delete('/api/bookings/:id', (req, res) => {
-    const bookingId = req.params.id;
-    const query = 'UPDATE bookings SET isDeleted = 1 WHERE id = ?';
+    // SQL query to fetch booking details
+    const query = 'SELECT * FROM bookings WHERE id = ?'; // Adjust this query according to your table structure
 
     db.query(query, [bookingId], (err, results) => {
         if (err) {
-            console.error('Error marking booking as deleted:', err);
-            return res.status(500).json({ error: 'Failed to delete booking' });
+            console.error('Error fetching booking details:', err);
+            return res.status(500).json({ error: 'Database query error' });
         }
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ error: 'Booking not found' });
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Booking not found' });
         }
-        res.status(204).send(); // No content
+        res.json(results[0]); // Return the first result
     });
 });
 
-// Update booking
-app.put('/api/bookings/:id', (req, res) => {
-    const { id } = req.params;
-    const { trip_name, adults, children } = req.body;
-
-    db.query('UPDATE bookings SET trip_name = ?, adults = ?, children = ? WHERE id = ?', 
-        [trip_name, adults, children, id], 
-        (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: err.message });
-            }
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: 'Booking not found' });
-            }
-            res.json({ message: 'Booking updated successfully' });
-        }
-    );
+// Example of Protected Route
+app.get("/mytrips", verifyToken, (req, res) => {
+  // Logic to fetch user's trips
+  res.json({ message: "Your trips" });
 });
 
-
-// Start server
+// Start the Server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

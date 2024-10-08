@@ -73,3 +73,55 @@ img {
     font-size: 1rem;
   }
 }
+/* HeroStyles.css */
+
+/* Button styles */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #007bff; /* Primary button color */
+  color: white; /* Text color */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  text-decoration: none; /* Remove underline */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Smooth transition */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: relative; /* Position for after pseudo-element */
+  overflow: hidden; /* Hide overflow for the after element */
+}
+
+/* Hover effect for the button */
+.btn:hover {
+  background-color: #0056b3; /* Darker shade for hover */
+  transform: scale(1.05); /* Slightly scale up */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+/* After pseudo-element for a ripple effect */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%; /* Large width for full ripple effect */
+  height: 300%; /* Large height for full ripple effect */
+  background: rgba(255, 255, 255, 0.2); /* Light overlay */
+  border-radius: 50%; /* Circular ripple */
+  transform: translate(-50%, -50%) scale(0); /* Start hidden */
+  transition: transform 0.6s, opacity 0.6s; /* Smooth animation */
+  opacity: 0; /* Start invisible */
+}
+
+/* Show the ripple effect on hover */
+.btn:hover::after {
+  transform: translate(-50%, -50%) scale(1); /* Scale to full size */
+  opacity: 1; /* Fade in */
+}
+
+/* Active state */
+.btn:active {
+  transform: scale(0.95); /* Scale down on click */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Reduce shadow */
+}

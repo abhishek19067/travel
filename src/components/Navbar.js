@@ -50,7 +50,8 @@ const Navbar = () => {
         username,
         email,
         password,
-      });
+    });
+    
       toast.success("Account created successfully!");
       localStorage.setItem("username", username);
       setLoggedIn(true);

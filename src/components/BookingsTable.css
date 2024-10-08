@@ -107,3 +107,18 @@
 .bg-dark:hover {
     background-color: #333; /* Keep the same color on hover */
 }
+
+.payment-button {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Font size */
+    margin-top: 10px; /* Spacing above the button */
+}
+
+.payment-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
