@@ -15,6 +15,8 @@ const BookingsTable = () => {
     const [currentBooking, setCurrentBooking] = useState(null);
     const [bookingToDelete, setBookingToDelete] = useState(null);
     const [selectedBookings, setSelectedBookings] = useState([]);
+    const [showScanImage, setShowScanImage] = useState(false);  // State to toggle the modal
+    const [paymentStatusMessage, setPaymentStatusMessage] = useState(""); // Message for payment status
     const navigate = useNavigate(); 
 
     useEffect(() => {
@@ -70,36 +72,11 @@ const BookingsTable = () => {
     const totalAmount = calculateTotalAmount();
 
     const handlePayment = () => {
-        const options = {
-            key: 'YOUR_RAZORPAY_KEY_ID', // Enter the Key ID generated from the Razorpay Dashboard
-            amount: totalAmount * 100, // Amount is in paise, so multiply by 100
-            currency: 'INR',
-            name: 'Your Company Name',
-            description: 'Payment for bookings',
-            handler: function (response) {
-                console.log('Payment successful:', response);
-            },
-            prefill: {
-                name: loggedInUsername,
-                email: '', // Add user's email if available
-                contact: '', // Add user's contact if available
-            },
-            notes: {
-                bookingIds: selectedBookings, // Add selected booking IDs
-            },
-            theme: {
-                color: '#F37254', // Change color as needed
-            }
-        };
-
-        const razorpay = new window.Razorpay(options);
-        razorpay.open();
+        // Show the scan image modal when payment is initiated
+        setShowScanImage(true);
     };
 
-   
-
     const createTicket = (booking) => {
-        // Here, you can save the ticket data, e.g., sending it to an API
         axios.post('http://localhost:5000/api/tickets', {
             username: loggedInUsername,
             bookingId: booking.id,
@@ -117,8 +94,17 @@ const BookingsTable = () => {
     };
 
     const viewTicket = (bookingId) => {
-        // Navigate to ticket view page with booking ID
         navigate(`/view-ticket/${bookingId}`);
+    };
+
+    const closeScanModal = () => {
+        setShowScanImage(false);  // Close the modal when the close button is clicked
+        
+        // Simulate notifying the admin about the received payment
+        console.log("Admin Notification: Payment received. Please verify and confirm the booking details.");
+
+        // Show confirmation message to the user
+        setPaymentStatusMessage("Your payment has been received. Your booking will be confirmed shortly!");
     };
 
     return (
@@ -167,8 +153,7 @@ const BookingsTable = () => {
                                             <td>${booking.price.toFixed(2)}</td>
                                             <td>
                                                 <button 
-                                                   onClick={() => viewTicket(booking.id)} // Pass booking ID
-                                                // Pass booking object
+                                                   onClick={() => viewTicket(booking.id)} 
                                                     className="bg-info" 
                                                     title="View Ticket"
                                                 >
@@ -200,6 +185,28 @@ const BookingsTable = () => {
                         )}
                     </div>
                     
+                    {/* Modal for Payment Scan Image */}
+                    {showScanImage && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h2>Payment Scan</h2>
+                                <button className="close-modal" onClick={closeScanModal}>X</button>
+                                <img 
+                                    src="/images/scan .jpg"  // Correct path to the image
+                                    alt="Payment Scan"
+                                    className="scan-image-modal"
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Confirmation Message after Payment */}
+                    {paymentStatusMessage && (
+                        <div className="payment-status-message">
+                            <p>{paymentStatusMessage}</p>
+                        </div>
+                    )}
+
                     <ConfirmationModal 
                         isVisible={isConfirmationVisible}
                         onConfirm={confirmDelete}

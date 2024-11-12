@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import { FaShoppingCart } from 'react-icons/fa';
 import Modal from './Model'; // Import the Modal component
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer for notifications
+import 'react-toastify/dist/ReactToastify.css'; // Import the toast styles
 
-const TripData = ({ image, heading, text, price, days }) => { // Add days to props
+
+const TripData = ({ image, heading, text, price, days }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [adults, setAdults] = useState(0);
     const [children, setChildren] = useState(0);
 
     const addToCart = () => {
-        setIsModalOpen(true); // Open the modal when Add to Cart is clicked
+        const isLoggedIn = localStorage.getItem("username"); // Check if user is logged in
+
+        if (isLoggedIn) {
+            setIsModalOpen(true); // Open the modal if logged in
+        } else {
+            toast.error("Please log in to add items to the cart."); // Show login prompt
+        }
     };
 
     const closeModal = () => {
@@ -23,7 +32,7 @@ const TripData = ({ image, heading, text, price, days }) => { // Add days to pro
             <h4>{heading}</h4>
             <p>{text}</p>
             <p className="price">{price}</p>
-            <p><strong>Duration:</strong> {days} days</p> {/* Display days */}
+            <p><strong>Duration:</strong> {days} days</p>
             <button className="add-to-cart" onClick={addToCart}>
                 <FaShoppingCart /> Add to Cart
             </button>
@@ -38,6 +47,9 @@ const TripData = ({ image, heading, text, price, days }) => { // Add days to pro
                 children={children}
                 setChildren={setChildren}
             />
+
+            {/* Toast Container for showing error messages */}
+            <ToastContainer />
         </div>
     );
 };

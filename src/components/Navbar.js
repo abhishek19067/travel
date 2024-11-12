@@ -46,11 +46,11 @@ const Navbar = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/register", {
+      await axios.post("http://localhost:5000/register", {
         username,
         email,
         password,
-    });
+      });
     
       toast.success("Account created successfully!");
       localStorage.setItem("username", username);
@@ -58,7 +58,6 @@ const Navbar = () => {
       setShowModal(false);
     } catch (error) {
       toast.error("Error during sign up: " + (error.response ? error.response.data.error : error.message));
-      console.error("Error during sign up:", error);
     }
   };
 
@@ -73,7 +72,6 @@ const Navbar = () => {
       setShowModal(false);
     } catch (error) {
       toast.error("Error during login: " + (error.response ? error.response.data.error : error.message));
-      console.error("Error during login:", error);
     }
   };
 
@@ -132,6 +130,7 @@ const Navbar = () => {
 
       {showModal && (
         <div className="signup-container show">
+          <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
           {showSignUp ? (
             <>
               <h2>Sign Up</h2>

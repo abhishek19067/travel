@@ -255,3 +255,21 @@ button:hover {
 .admin-login-container button {
   margin: 5px 0;
 }
+
+
+.close-btn {
+  font-size: 15px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #f00;
+  background-color: white;
+  
+}

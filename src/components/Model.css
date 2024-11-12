@@ -1,6 +1,6 @@
 .modal-overlay {
     position: fixed;
-    top: 0;
+    top: 100px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -8,25 +8,32 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
+    overflow-y: auto; /* Allows scrolling if content overflows */
 }
 
 .modal-content {
     background: white;
     border-radius: 8px;
-    padding: 2rem;
+    padding: 2rem 1.5rem 1.5rem; /* Added extra top padding */
     position: relative;
-    width:450px; /* Adjust as needed */
-    max-width: 90%; /* Responsive */
+    width: 90%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
 }
 
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 12px; /* Increased top position to ensure visibility */
+    right: 12px;
     background: transparent;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Increased font size for better visibility */
     cursor: pointer;
+    color: #333; /* Ensures button is visible */
 }
 
 .quantity-controls {

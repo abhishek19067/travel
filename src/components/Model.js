@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./Model.css"
 
 const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren }) => {
     if (!isOpen) return null;

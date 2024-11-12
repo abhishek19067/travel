@@ -1,0 +1,29 @@
+/* Style for the Toast message (optional) */
+.Toastify__toast--error {
+    background-color: #d9534f; /* Red background for error */
+  }
+  
+  /* Additional Modal styles if needed */
+  .t-card {
+    position: relative;
+    /* Add your styles for the trip card */
+  }
+  
+  .add-to-cart {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-to-cart:hover {
+    background-color: #218838;
+  }
+  
+  .add-to-cart i {
+    margin-right: 5px;
+  }
+  
