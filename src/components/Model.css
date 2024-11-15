@@ -15,6 +15,7 @@
 .modal-content {
     background: white;
     border-radius: 8px;
+    margin-top: 200px;
     padding: 2rem 1.5rem 1.5rem; /* Added extra top padding */
     position: relative;
     width: 90%;
@@ -53,4 +54,71 @@
 
 .add-to-cart {
     margin-top: 1rem;
+}
+/* Prevent body scroll when the modal is open */
+.no-scroll {
+    overflow: hidden;
+}
+
+/* Modal overlay to cover the entire screen */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal content styling */
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 90%;
+    max-height: 90vh; /* Restrict the modal height */
+    overflow-y: auto; /* Enable scrolling within the modal */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+/* Toast container */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Toast message */
+.toast-message {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    animation: fade-in 0.5s ease, fade-out 0.5s 2.5s ease;
+}
+
+/* Fade-in and fade-out animations */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

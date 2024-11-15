@@ -1,15 +1,15 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./Model.css"
+import "./Model.css";
 
 const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren }) => {
     if (!isOpen) return null;
 
     const username = localStorage.getItem('username') || 'Guest';
     const [startDate, setStartDate] = useState(new Date());
+    const [toastMessage, setToastMessage] = useState(null);
 
     const confirmBooking = async () => {
         const bookingDate = startDate.toISOString().split('T')[0];
@@ -34,11 +34,11 @@ const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren
             });
 
             console.log('Booking confirmed:', response.data);
-            toast.success(`${trip.heading} is now in Your Trip Section!`);
+            showToast(`${trip.heading} is now in Your Trip Section!`);
             onClose();
         } catch (error) {
             console.error('Error confirming booking:', error.response ? error.response.data : error.message);
-            toast.error('Error confirming booking. Please try again.');
+            showToast('Error confirming booking. Please try again.');
         }
     };
 
@@ -48,6 +48,12 @@ const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren
         const oneYearFromNow = new Date();
         oneYearFromNow.setFullYear(today.getFullYear() + 1);
         return date >= today && date <= oneYearFromNow; // Ensure the date is valid
+    };
+
+    // Function to show toast message
+    const showToast = (message) => {
+        setToastMessage(message);
+        setTimeout(() => setToastMessage(null), 3000); // Hide the toast after 3 seconds
     };
 
     return (
@@ -88,6 +94,13 @@ const Modal = ({ isOpen, onClose, trip, adults, setAdults, children, setChildren
 
                 <button className="add-to-cart" onClick={confirmBooking}>Confirm Booking</button>
             </div>
+
+            {/* Toast message container */}
+            {toastMessage && (
+                <div className="toast-container">
+                    <div className="toast-message">{toastMessage}</div>
+                </div>
+            )}
         </div>
     );
 };

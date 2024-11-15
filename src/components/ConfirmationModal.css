@@ -1,54 +1,92 @@
-/* ConfirmationModal.css */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease-in-out;
+.confirmation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* slightly darker overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.4s ease-in-out; /* fade-in animation for overlay */
 }
 
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.3s ease-in-out;
+.confirmation-modal-content {
+  background-color: #ffffff;
+  padding: 25px 35px;
+  border-radius: 16px;
+  width: 340px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  transform: translateY(-40px);
+  animation: slideUp 0.4s ease-in-out forwards, dropShadow 1s ease-in-out infinite alternate; /* slide-up and subtle pulsing shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+/* Advanced button styles */
+.confirmation-modal-content button {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 10px;
+  position: relative;
+  overflow: hidden;
 }
 
-.confirm-button, .cancel-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.confirmation-modal-content button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0);
+  transition: transform 0.3s ease;
+  border-radius: inherit;
 }
 
-.confirm-button {
-    background-color: #d9534f; /* Bootstrap danger color */
-    color: white;
+.confirmation-modal-content button:hover:before {
+  transform: scale(1); /* hover pulse effect */
 }
 
-.cancel-button {
-    background-color: #5bc0de; /* Bootstrap info color */
-    color: white;
+.confirmation-modal-content button:hover {
+  background-color: #45a049;
+  box-shadow: 0px 8px 15px rgba(0, 128, 0, 0.2);
+  transform: translateY(-2px);
 }
 
+/* Cancel button with its own hover effect */
+.confirmation-modal-content button.cancel {
+  background-color: #f44336;
+}
+
+.confirmation-modal-content button.cancel:hover {
+  background-color: #e53935;
+  box-shadow: 0px 8px 15px rgba(255, 0, 0, 0.2);
+}
+
+/* Animation for overlay fade-in */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+/* Animation for modal slide-up */
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Drop shadow pulsating effect */
+@keyframes dropShadow {
+  0% { box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); }
+  100% { box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4); }
 }

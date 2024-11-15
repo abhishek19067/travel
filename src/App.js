@@ -8,7 +8,9 @@ import MyTrips from './components/MyTrips';
 
 import BookingsTable from "./components/MyTrips";
 import TicketView from "./components/TicketView";
-
+import PrivateRoute from "./routes/PrivateRoute";
+import AdminPage from "./components/Admin";
+import ManageUsersPage from "./components/ManageUsers";
 export default function App() {
   return (
     <div className="App">
@@ -21,6 +23,19 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/MyTrips" element={<MyTrips />} />
         <Route path="/view-ticket/:bookingId" element={<TicketView />} />
+        <Route path="/admin/manage-users"
+         element={
+          <PrivateRoute>
+          <ManageUsersPage/>
+            </PrivateRoute>} />
+        <Route 
+          path="/admin/dashboard" 
+          element={
+            <PrivateRoute>
+              <AdminPage />
+            </PrivateRoute>
+          } 
+        />
 
       </Routes>
     </div>

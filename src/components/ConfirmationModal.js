@@ -1,22 +1,26 @@
-// ConfirmationModal.js
 import React from "react";
-import './ConfirmationModal.css'; // Import your styles here
+import PropTypes from "prop-types";
+import "./ConfirmationModal.css";
 
-const ConfirmationModal = ({ isVisible, onConfirm, onCancel ,message}) => {
-    if (!isVisible) return null;
+const ConfirmationModal = ({ isVisible, onConfirm, onCancel, message }) => {
+  if (!isVisible) return null;
 
-    return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>Confirm Logout</h2>
-                <p>{message}</p>
-                <div className="modal-actions">
-                    <button className="confirm-button" onClick={onConfirm}>Yes</button>
-                    <button className="cancel-button" onClick={onCancel}>No</button>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <div className="confirmation-modal-overlay">
+      <div className="confirmation-modal-content">
+        <p>{message}</p>
+        <button onClick={onConfirm}>Yes</button>
+        <button onClick={onCancel}>No</button>
+      </div>
+    </div>
+  );
+};
+
+ConfirmationModal.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  message: PropTypes.string.isRequired,
 };
 
 export default ConfirmationModal;
